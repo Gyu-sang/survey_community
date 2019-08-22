@@ -1,0 +1,16 @@
+{% extends "survey/survey_base.html" %}
+
+{% block survey %}
+
+<main role="main" class="inner cover">
+  <h1 class="cover-heading">{{post.title}}</h1>
+  <hr/>
+  <p class="lead">이미 참여한 설문입니다.</p>
+  <hr/>
+
+  <p class="lead">
+    <a href="{% url 'survey:survey_detail' post.pk %}" class="btn btn-outline-secondary">돌아가기</a>
+  </p>
+</main>
+
+{% endblock %}

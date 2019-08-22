@@ -1,0 +1,86 @@
+{% load socialaccount %}
+{% providers_media_js %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Survey Community</title>
+    <link href="offcanvas.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+
+    <!-- Tempus Dominus Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+
+
+    <style>
+      #margin_remove {
+        padding-bottom : 0;
+    </style>
+    <style type="text/css">
+      .my-box { border:1px dashed; padding:10px; margin-top:30px; margin-bottom:30px;}
+      .asteriskField{display:none;}
+      form .alert ul li{
+        list-style : none;
+      }
+      form .alert ul{
+        padding : 0;
+        margin : 0;
+      }
+    </style>
+  </head>
+
+
+
+  <body class="bg-light">
+    <div class="container">
+      <div class="py-4 text-right">
+        {% if user.is_authenticated %}
+        <a class="btn btn-outline-primary" href="{% url 'accounts:logout' %}">로그아웃</a>
+        {% else %}
+        <a class="btn btn-outline-secondary" href="{% url 'accounts:signup' %}">회원가입</a>
+        <a class="btn btn-outline-primary" href="{% url 'accounts:login' %}?next={{request.path}}">로 그 인</a>
+        {% endif %}
+      </div>
+
+      <div class="py-5 text-center">
+        <h2>
+          <a href="{% url "root" %}">
+            <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+          </a>
+          <a href="{% url "root" %}">설문조사 품앗이 </a>
+        </h2>
+        <p class="lead">설문조사를 서로 도와주고 크레딧을 받아가세요! <br/> 5천 원 단위로 현금화할 수 있습니다.</p>
+        <hr/>
+
+
+
+{% block content%}
+{% endblock%}
+    </div>
+  </div>
+
+
+  <script>
+    $(function () {
+      $("#datetimepicker1").datetimepicker({
+        format: 'YYYY-MM-DD HH:mm',
+      });
+    });
+  </script>
+
+
+
+  </body>
+</html>

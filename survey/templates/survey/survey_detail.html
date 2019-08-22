@@ -1,0 +1,189 @@
+{% extends "survey/survey_base.html" %}
+{% load post_extras %}
+
+{% block survey %}
+<div class="card-deck mb-3 text-center">
+  <div class="card mb-4 box-shadow">
+    <div class="card-header">
+      <h2 class="my-0 font-weight-normal">{{post.title}}</h2>
+    </div>
+    <div class="card-body">
+      <h6>글쓴이 : {{post.author}} / 참여 여부 :
+        {% with post.comment2_set|filter_user:request.user|first as first_object %}
+        {% if first_object.done %}
+        <td class="field-done"><img src="/static/admin/img/icon-yes.svg" alt="True"></td>
+        {% else %}
+        <td class="field-done"><img src="/static/admin/img/icon-no.svg" alt="False"></td>
+        {% endif %}
+        {% endwith %} / 크레딧 : {{post.credit}} </h6>
+      <div class="py-0 text-right">
+      {% if request.user == post.author %}
+      <form action="{% url 'survey:post_delete' post.pk %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger" onclick="return confirm('really?')">설문 삭제</button>
+      </form>
+      {% endif %}
+      </div>
+      <div class="my-box">
+        {{post.content | linebreaks}}
+      </div>
+        <a class="btn btn-lg btn-block btn-outline-primary" href="#" onclick="window.open('{{post.link}}','name','width=600,height=400')">설문 참여하기</a>
+    </div>
+  </div>
+</div>
+<h4>Comments</h4>
+
+
+{% for comment in comment_list %}
+<div class="my-box">
+  <a href='{{comment.photo.url}}' target="_blank"><img src='{{comment.photo.url}}' width=450x; height=auto;/></a>
+<br/>
+<br/>
+{{comment.message}}
+</div>
+<hr/>
+{% if request.user == comment.author %}
+<div class="text-left">
+<li class="justify-content-between" style="list-style-type: none;">
+  <a href="{% url 'survey:comment_edit' post.pk comment.pk %}" class="btn btn-outline-secondary">댓글 수정</a>
+  <form style="display:inline;" action="{% url 'survey:comment_delete' post.pk comment.pk %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('really?')">댓글 삭제</button>
+  </form>
+</li>
+</div>
+{% endif %}
+{% endfor %}
+
+<hr/>
+<div class="text-left">
+{% if comment_list.count == 0 %}
+<a href="{% url 'survey:comment_new2' post.pk %}" class="btn btn-primary">댓글 쓰기</a>
+{% endif %}
+</div>
+
+
+<hr/>
+
+<h4 class="mb-3">설문 리스트</h4>
+<div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>마감일</th>
+          <th>참여여부</th>
+          <th>제목</th>
+          <th>글쓴이</th>
+          <th>크레딧</th>
+          <th>참여율</th>
+          <th>마감여부</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post2 in post_list %}
+        <tr>
+          <td>{{post2.pk}}</td>
+
+          <td>{{post2.finished_at|date:'m-d H:i'}}</td>
+          {% if user.is_authenticated %}
+
+          {% with post2.comment2_set|filter_user:request.user|first as first_object %}
+          {% if first_object.done %}
+          <td class="field-done"><img src="/static/admin/img/icon-yes.svg" alt="True"></td>
+          {% else %}
+          <td class="field-done"><img src="/static/admin/img/icon-no.svg" alt="False"></td>
+          {% endif %}
+          {% endwith %}
+
+          {% else %}
+          <td class="field-done"><img src="/static/admin/img/icon-no.svg" alt="False"></td>
+          {% endif %}
+
+          {% if post2.notice == True %}
+            {% ifequal post post2 %}
+            <td><strong style="color:black;">{{post2.title}}</strong></td>
+            {% else %}
+            <td><a href="{% url 'survey:survey_detail' post2.pk %}?page={{ post_list.number }}"><strong style="color:black;">{{post2.title}}</strong></a></td>
+            {% endifequal%}
+          {% else %}
+
+            {% ifequal post post2 %}
+            <td>{{post2.title}}</td>
+            {% else %}
+            <td><a href="{% url 'survey:survey_detail' post2.pk %}?page={{ post_list.number }}">{{post2.title}}</a></td>
+            {% endifequal%}
+          {% endif %}
+
+          <td>{{post2.author}}</td>
+          <td>{{post2.credit}}</td>
+          <td>{{post2.comment2_set.all.count}}/{{post2.max_participant}}</td>
+          <td>{{post2.finish|finish_check}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Pagination #}
+{% if is_paginated %}
+    <nav style="
+    display: inline-block;
+    list-style-type: none;">
+      <ul class="pagination">
+        {% if post_list.has_previous %}
+
+          <li>
+            <a href="?page={{ post_list.previous_page_number }}">
+              <span>이전</span>
+            </a>
+          </li>
+        {% else %}
+
+
+          <li class="disabled">
+
+              <span>이전</span>
+
+          </li>
+        {% endif %}
+
+        {% for page in page_range %}
+          {% ifequal page post_list.number %}
+          <li style="
+            margin-right:10px;
+            margin-left:10px;
+            "class="active">
+            {{ page }}
+          </li>
+          {% else %}
+          <li style="
+            margin-right:10px;
+            margin-left:10px;
+            "class="active">
+            <a href="?page={{ page }}">{{ page }}</a>
+          </li>
+          {% endifequal %}
+        {% endfor %}
+
+        {% if post_list.has_next %}
+          <li>
+            <a href="?page={{ post_list.next_page_number }}">
+              <span>다음</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="disabled">
+
+              <span>다음</span>
+
+          </li>
+        {% endif %}
+      </ul>
+
+    </nav>
+{% endif %}
+
+
+
+{% endblock %}

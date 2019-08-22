@@ -1,0 +1,118 @@
+
+{% extends "survey/survey_base.html" %}
+{% load post_extras %}
+
+
+{% block survey %}
+
+<h4 class="mb-3">설문 리스트</h4>
+<div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>마감일</th>
+          <th>참여여부</th>
+          <th>제목</th>
+          <th>글쓴이</th>
+          <th>크레딧</th>
+          <th>참여율</th>
+          <th>마감여부</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in post_list %}
+        <tr>
+          <td>{{post.pk}}</td>
+
+          <td>{{post.finished_at|date:'m-d H:i'}}</td>
+          {% if user.is_authenticated %}
+
+          {% with post.comment2_set|filter_user:request.user|first as first_object %}
+          {% if first_object.done %}
+          <td class="field-done"><img src="/static/admin/img/icon-yes.svg" alt="True"></td>
+          {% else %}
+          <td class="field-done"><img src="/static/admin/img/icon-no.svg" alt="False"></td>
+          {% endif %}
+          {% endwith %}
+
+          {% else %}
+          <td class="field-done"><img src="/static/admin/img/icon-no.svg" alt="False"></td>
+          {% endif %}
+
+          {% if post.notice == True %}
+          <td><a href="{% url 'survey:survey_detail' post.pk %}?page={{ post_list.number }}"><strong style="color:black;">{{post.title}}</strong></a></td>
+          {% else %}
+          <td><a href="{% url 'survey:survey_detail' post.pk %}?page={{ post_list.number }}">{{post.title}}</a></td>
+          {% endif %}
+
+          <td>{{post.author}}</td>
+          <td>{{post.credit}}</td>
+          <td>{{post.comment2_set.all.count}}/{{post.max_participant}}</td>
+          <td>{{post.finish|finish_check}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Pagination #}
+{% if is_paginated %}
+    <nav style="
+    display: inline-block;
+    list-style-type: none;">
+      <ul class="pagination">
+        {% if post_list.has_previous %}
+
+          <li>
+            <a href="?page={{ post_list.previous_page_number }}">
+              <span>이전</span>
+            </a>
+          </li>
+        {% else %}
+
+
+          <li class="disabled">
+
+              <span>이전</span>
+
+          </li>
+        {% endif %}
+
+        {% for page in page_range %}
+          {% ifequal page post_list.number %}
+          <li style="
+            margin-right:10px;
+            margin-left:10px;
+            "class="active">
+            {{ page }}
+          </li>
+          {% else %}
+          <li style="
+            margin-right:10px;
+            margin-left:10px;
+            "class="active">
+            <a href="?page={{ page }}">{{ page }}</a>
+          </li>
+          {% endifequal %}
+        {% endfor %}
+
+        {% if post_list.has_next %}
+          <li>
+            <a href="?page={{ post_list.next_page_number }}">
+              <span>다음</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="disabled">
+
+              <span>다음</span>
+
+          </li>
+        {% endif %}
+      </ul>
+
+    </nav>
+{% endif %}
+
+{% endblock %}

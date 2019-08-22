@@ -1,0 +1,18 @@
+{% extends "survey/survey_base.html" %}
+{% load crispy_forms_tags %}
+{% block survey %}
+
+<div class="py-5 text-left">
+  <h4 class="mb-3">크레딧 환전</h4>
+  <form action="" method="post" validate>
+    {% csrf_token %}
+    {{ form.name|as_crispy_field }}
+    {{ form.bank|as_crispy_field }}
+    {{ form.account|as_crispy_field }}
+    {{ form.credit|as_crispy_field }}
+    <input type="submit" class="btn btn-primary" value="제출하기"/>
+    <a class="btn btn-outline-secondary" href="{% url 'survey:calculate' %}">돌아가기</a>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "survey/survey_base.html" %}
+{% load crispy_forms_tags %}
+{% block survey %}
+
+<div class="py-5 text-left">
+<form action="" method="post" enctype="multipart/form-data" validate>
+  {% csrf_token %}
+  {{ form.message|as_crispy_field }}
+  {{ form.photo|as_crispy_field }}
+  <input type="submit" class="btn btn-primary" value="제출하기"/>
+  <a href="{% url 'survey:survey_detail' post.pk %}" class="btn btn-outline-secondary">돌아가기</a>
+</form>
+</div>
+
+
+
+
+
+
+{% endblock %}

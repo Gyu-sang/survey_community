@@ -1,0 +1,104 @@
+
+{% extends "survey/survey_base.html" %}
+{% load post_extras %}
+
+
+{% block survey %}
+
+
+<h4 class="mb-3">내 댓글 리스트</h4>
+<div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>작성자</th>
+          <th>설문</th>
+          <th>내 댓글</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for comment in comment_list %}
+        <tr>
+          <td>{{comment.pk}}</td>
+          <td>{{comment.post.author}}</td>
+          <td>{{comment.post.title}}</td>
+          <td><a href="{% url 'survey:survey_detail' comment.post.pk %}">{{comment.message}}</a></td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+
+  {# Pagination #}
+{% if is_paginated %}
+    <nav style="
+    display: inline-block;
+    list-style-type: none;">
+      <ul class="pagination">
+        {% if comment_list.has_previous %}
+
+          <li>
+            <a href="?page={{ comment_list.previous_page_number }}">
+              <span>이전</span>
+            </a>
+          </li>
+        {% else %}
+
+
+          <li class="disabled">
+
+              <span>이전</span>
+
+          </li>
+        {% endif %}
+
+        {% for page in page_range %}
+          {% ifequal page comment_list.number %}
+          <li style="
+            margin-right:10px;
+            margin-left:10px;
+            "class="active">
+            {{ page }}
+          </li>
+          {% else %}
+          <li style="
+            margin-right:10px;
+            margin-left:10px;
+            "class="active">
+            <a href="?page={{ page }}">{{ page }}</a>
+          </li>
+          {% endifequal %}
+        {% endfor %}
+
+        {% if comment_list.has_next %}
+          <li>
+            <a href="?page={{ comment_list.next_page_number }}">
+              <span>다음</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="disabled">
+
+              <span>다음</span>
+
+          </li>
+        {% endif %}
+      </ul>
+
+    </nav>
+{% endif %}
+
+
+
+
+
+
+
+
+
+{% endblock %}
